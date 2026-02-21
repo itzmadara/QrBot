@@ -7,6 +7,7 @@ from urllib.parse import quote
 import qrcode
 from pyrogram import Client, filters
 from pyrogram.types import Message
+from dotenv import load_dotenv
 
 
 logging.basicConfig(
@@ -14,6 +15,8 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
 )
 logger = logging.getLogger("upi-qr-bot")
+
+load_dotenv()
 
 
 API_ID = os.getenv("API_ID")
