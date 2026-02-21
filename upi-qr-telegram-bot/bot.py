@@ -7,7 +7,6 @@ from urllib.parse import quote
 import qrcode
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from dotenv import load_dotenv
 
 
 logging.basicConfig(
@@ -15,8 +14,6 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
 )
 logger = logging.getLogger("upi-qr-bot")
-
-load_dotenv()
 
 
 API_ID = os.getenv("API_ID")
@@ -46,8 +43,10 @@ def is_valid_amount(amount: str) -> bool:
 def build_upi_link(upi_id: str, amount: str, payee_name: str, note: str) -> str:
     encoded_name = quote(payee_name.strip() or DEFAULT_PAYEE_NAME)
     encoded_note = quote(note.strip() or DEFAULT_NOTE)
+    # BHIM is strict about `pa` and may reject percent-encoded `@` in UPI IDs.
+    # Keep `pa` as plain VPA (name@bank) while encoding free-text fields.
     return (
-        f"upi://pay?pa={quote(upi_id)}"
+        f"upi://pay?pa={upi_id}"
         f"&pn={encoded_name}"
         f"&am={amount}"
         f"&cu=INR"
