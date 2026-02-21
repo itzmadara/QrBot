@@ -1,3 +1,5 @@
 pyrogram==2.0.106
 tgcrypto==1.2.5
 qrcode[pil]==7.4.2
+python-decouple
+python-dotenv
