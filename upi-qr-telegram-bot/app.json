@@ -1,0 +1,36 @@
+{
+  "name": "upi-qr-telegram-bot",
+  "description": "Telegram bot using Pyrogram to generate UPI payment QR codes.",
+  "repository": "https://github.com/your-username/upi-qr-telegram-bot",
+  "keywords": ["python", "telegram", "pyrogram", "upi", "qr"],
+  "env": {
+    "API_ID": {
+      "description": "Telegram API ID from my.telegram.org",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Telegram API hash from my.telegram.org",
+      "required": true
+    },
+    "BOT_TOKEN": {
+      "description": "Telegram bot token from @BotFather",
+      "required": true
+    },
+    "DEFAULT_PAYEE_NAME": {
+      "description": "Fallback payee name used in QR",
+      "required": false,
+      "value": "UPI Payment"
+    },
+    "DEFAULT_NOTE": {
+      "description": "Fallback transaction note used in QR",
+      "required": false,
+      "value": "Payment"
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}
