@@ -8,6 +8,8 @@ import qrcode
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from PIL import Image, ImageDraw, ImageFont
+from config import START_PHOTO, LOG_CHANNEL, OWNER_IDS, START_MESSAGE
+from db import is_user_new, save_user_to_db
 
 logging.basicConfig(
     level=logging.INFO,
@@ -113,18 +115,44 @@ def create_styled_qr(data: str, payee: str, amount: str) -> BytesIO:
 app = Client("upi-qr-bot", api_id=int(API_ID), api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 
-@app.on_message(filters.command("start"))
-async def start_handler(_: Client, message: Message) -> None:
-    help_text = (
-        "Send:\n"
-        "`/qr <upi_id> <amount> [payee_name] [note]`\n\n"
-        "Examples:\n"
-        "`/qr yourname@okaxis 149.99`\n"
-        "`/qr yourname@okaxis 250 John_Doe Lunch`\n\n"
-        "Tip: Use underscore (_) instead of spaces for payee name and note."
-    )
-    await message.reply_text(help_text, disable_web_page_preview=True)
+@app.on_message(filters.command("start") & filters.private)
+async def start(client: Client, message: Message):
+    user_id = message.from_user.id
+    user_name = message.from_user.first_name
+    is_new = await is_user_new(user_id)
+    await save_user_to_db(user_id, user_name)
+    if is_new:
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_message = (
+            f"#NewUser\n"
+            f"ID - {user_id}\n"
+            f"Name - {user_name}\n"
+            f"Date & Time - {current_time}\n"
+            f"Database: MongoDB\n\n"
+            f"Bot Username: @{client.me.username}"
+        )
+        try:
+            await client.send_message(LOG_CHANNEL, log_message)
+        except Exception as e:
+            print(f"Failed to send log message: {e}")
 
+    buttons = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("Dҽʋҽʅσρҽɾ", url="https://t.me/ItzMonkeyDLuffy"),
+                InlineKeyboardButton("Hҽʅρ", callback_data="show_help"),
+            ],
+            [
+                InlineKeyboardButton("Cԋαɳɳҽʅ", url="https://t.me/Anime_Station_Bots"),
+            ]
+        ]
+    )
+    await client.send_photo(
+        chat_id=message.chat.id,
+        photo=START_PHOTO,
+        caption=START_MESSAGE.format(mention=message.from_user.mention),
+        reply_markup=buttons
+    )
 
 @app.on_message(filters.command("qr"))
 async def qr_handler(_: Client, message: Message) -> None:
