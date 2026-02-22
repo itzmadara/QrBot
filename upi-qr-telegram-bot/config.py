@@ -15,19 +15,6 @@ Wᴇʟᴄᴏᴍᴇ ᴛᴏ ᴛʜᴇ **UPI QR Cᴏᴅᴇ Gᴇɴᴇʀᴀᴛᴏʀ B�
 
 I ᴄᴀɴ ɪɴsᴛᴀɴᴛʟʏ ᴄʀᴇᴀᴛᴇ ᴀ sᴄᴀɴɴᴀʙʟᴇ UPI QR ᴄᴏᴅᴇ ғᴏʀ ᴀɴʏ ᴠᴀʟɪᴅ UPI ID 💸  
 
-━━━━━━━━━━━━━━━  
-**📌 Hᴏᴡ Tᴏ Usᴇ:**
-
-Send:
-`/qr <upi_id> <amount> [name] [note]`
-
-**Example:**
-`/qr yourname@okaxis 149.99`  
-`/qr yourname@okaxis 250 John_Doe Lunch`
-
-📎 Use underscore (_) instead of spaces  
-━━━━━━━━━━━━━━━  
-
 ✅ 100% Secure  
 ⚡ Instant QR Generation  
 🎨 Clean & Stylish Design  
