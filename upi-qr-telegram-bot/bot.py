@@ -208,7 +208,8 @@ async def help_handler(_: Client, message: Message) -> None:
 <emoji id="5445353829304387411">📘</emoji> <b>UPI QR Code Generator – Help Guide</b>
 
 ━━━━━━━━━━━━━━━  
-<b>🧾 Command Format</b>
+<emoji id="5444856076954520455">🧾</emoji> <b>Command Format</b>
+
 
 <code>/qr &lt;upi_id&gt; &lt;amount&gt; [payee_name] [note]</code>
 
@@ -234,8 +235,7 @@ Use underscore (_) instead of spaces.
 <code>/qr merchant@upi 1499 Store_Payment Invoice_01</code>
 
 ━━━━━━━━━━━━━━━  
-<b>⚡ Features</b>
-
+<emoji id="6298454498884978957">✨</emoji> <b>Features</b>
 • Instant QR Code Generation  
 • Secure UPI Payment Link  
 • Custom Name & Note  
@@ -244,7 +244,7 @@ Use underscore (_) instead of spaces.
 
 ━━━━━━━━━━━━━━━  
 
-Need help? Just send your <code>/qr</code> command and get your QR instantly  
+Need help? Just send your <code>/qr</code> Get your QR instantly  
 <emoji id="5382199784075448966">🚀</emoji>
 """
 
