@@ -202,6 +202,53 @@ async def qr_handler(_: Client, message: Message) -> None:
     logger.info("Generated QR for user=%s upi=%s amount=%s", message.from_user.id, upi_id, amount)
 
 
+@app.on_message(filters.command("help"))
+async def help_handler(_: Client, message: Message) -> None:
+    help_text = """
+**💳 UPI QR Code Generator – Help Guide**
+
+━━━━━━━━━━━━━━━  
+**🧾 Command Format**
+
+`/qr <upi_id> <amount> [payee_name] [note]`
+
+━━━━━━━━━━━━━━━  
+**📌 Parameters Explained**
+
+• `<upi_id>` → Your valid UPI ID  
+  Example: `yourname@okaxis`
+
+• `<amount>` → Payment amount (positive number)  
+  Example: `149.99`
+
+• `[payee_name]` → Optional display name  
+• `[note]` → Optional transaction note  
+
+Use underscore (_) instead of spaces.
+
+━━━━━━━━━━━━━━━  
+**✅ Examples**
+
+`/qr yourname@okaxis 199`  
+`/qr yourname@okaxis 500 John_Doe Rent`  
+`/qr merchant@upi 1499 Store_Payment Invoice_01`
+
+━━━━━━━━━━━━━━━  
+**⚡ Features**
+
+• Instant QR Code Generation  
+• Secure UPI Payment Link  
+• Custom Name & Note  
+• Works with GPay, PhonePe, Paytm & BHIM  
+• Clean & Scannable Design  
+
+━━━━━━━━━━━━━━━  
+
+Need help? Just send your `/qr` command and get your QR instantly 💸
+"""
+    await message.reply_text(help_text, disable_web_page_preview=True)
+
+
 @app.on_message(filters.command("status"))
 async def bot_status(client, message):
     # Calculate uptime
