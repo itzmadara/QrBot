@@ -7,7 +7,7 @@ from urllib.parse import quote
 import qrcode
 from pyrogram import Client, filters
 from pyrogram.types import Message
-
+from PIL import Image, ImageDraw, ImageFont
 
 logging.basicConfig(
     level=logging.INFO,
@@ -70,6 +70,45 @@ def create_qr_image(data: str) -> BytesIO:
     buffer.name = "upi_qr.png"
     return buffer
 
+def create_styled_qr(data: str, payee: str, amount: str) -> BytesIO:
+    # Generate QR
+    qr = qrcode.QRCode(
+        error_correction=qrcode.constants.ERROR_CORRECT_H
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    qr_img = qr.make_image(fill_color="#111111", back_color="white").convert("RGBA")
+    qr_img = qr_img.resize((500, 500))
+
+    # Create background card
+    card = Image.new("RGBA", (700, 900), "#f4f6fb")
+    draw = ImageDraw.Draw(card)
+
+    # Draw white rounded box
+    box = Image.new("RGBA", (640, 820), "white")
+    card.paste(box, (30, 40))
+
+    # Paste QR
+    card.paste(qr_img, (100, 200))
+
+    # Add text
+    try:
+        font_big = ImageFont.truetype("arial.ttf", 50)
+        font_small = ImageFont.truetype("arial.ttf", 35)
+    except:
+        font_big = ImageFont.load_default()
+        font_small = ImageFont.load_default()
+
+    draw.text((100, 80), payee, fill="black", font=font_big)
+    draw.text((100, 750), f"INR {amount}", fill="#2e7d32", font=font_small)
+
+    buffer = BytesIO()
+    card.save(buffer, format="PNG")
+    buffer.seek(0)
+    buffer.name = "styled_upi_qr.png"
+    return buffer
+
 
 app = Client("upi-qr-bot", api_id=int(API_ID), api_hash=API_HASH, bot_token=BOT_TOKEN)
 
@@ -117,7 +156,7 @@ async def qr_handler(_: Client, message: Message) -> None:
         return
 
     upi_link = build_upi_link(upi_id, amount, payee_name, note)
-    image_buffer = create_qr_image(upi_link)
+    image_buffer = create_styled_qr(upi_link, payee_name, amount)
 
     caption = (
         f"UPI QR Generated\n"
