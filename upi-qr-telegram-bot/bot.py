@@ -201,40 +201,40 @@ async def qr_handler(_: Client, message: Message) -> None:
     await message.reply_photo(photo=image_buffer, caption=caption)
     logger.info("Generated QR for user=%s upi=%s amount=%s", message.from_user.id, upi_id, amount)
 
-
 @app.on_message(filters.command("help"))
 async def help_handler(_: Client, message: Message) -> None:
+
     help_text = """
-**💳 UPI QR Code Generator – Help Guide**
+<emoji id="5445353829304387411">📘</emoji> <b>UPI QR Code Generator – Help Guide</b>
 
 ━━━━━━━━━━━━━━━  
-**🧾 Command Format**
+<b>🧾 Command Format</b>
 
-`/qr <upi_id> <amount> [payee_name] [note]`
+<code>/qr &lt;upi_id&gt; &lt;amount&gt; [payee_name] [note]</code>
 
 ━━━━━━━━━━━━━━━  
-**📌 Parameters Explained**
+<emoji id="5397782960512444700">📌</emoji> <b>Parameters Explained</b>
 
-• `<upi_id>` → Your valid UPI ID  
-  Example: `yourname@okaxis`
+• <b>&lt;upi_id&gt;</b> → Your valid UPI ID  
+  Example: <code>yourname@okaxis</code>
 
-• `<amount>` → Payment amount (positive number)  
-  Example: `149.99`
+• <b>&lt;amount&gt;</b> → Payment amount (positive number)  
+  Example: <code>149.99</code>
 
-• `[payee_name]` → Optional display name  
-• `[note]` → Optional transaction note  
+• <b>[payee_name]</b> → Optional display name  
+• <b>[note]</b> → Optional transaction note  
 
 Use underscore (_) instead of spaces.
 
 ━━━━━━━━━━━━━━━  
-**✅ Examples**
+<emoji id="6296367896398399651">✨</emoji> <b>Examples</b>
 
-`/qr yourname@okaxis 199`  
-`/qr yourname@okaxis 500 John_Doe Rent`  
-`/qr merchant@upi 1499 Store_Payment Invoice_01`
+<code>/qr yourname@okaxis 199</code>  
+<code>/qr yourname@okaxis 500 John_Doe Rent</code>  
+<code>/qr merchant@upi 1499 Store_Payment Invoice_01</code>
 
 ━━━━━━━━━━━━━━━  
-**⚡ Features**
+<b>⚡ Features</b>
 
 • Instant QR Code Generation  
 • Secure UPI Payment Link  
@@ -244,9 +244,14 @@ Use underscore (_) instead of spaces.
 
 ━━━━━━━━━━━━━━━  
 
-Need help? Just send your `/qr` command and get your QR instantly 💸
+Need help? Just send your <code>/qr</code> command and get your QR instantly  
+<emoji id="5382199784075448966">🚀</emoji>
 """
-    await message.reply_text(help_text, disable_web_page_preview=True)
+
+    await message.reply_text(
+        help_text,
+        disable_web_page_preview=True
+    )
 
 
 @app.on_message(filters.command("status"))
