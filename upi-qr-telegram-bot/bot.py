@@ -9,7 +9,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from PIL import Image, ImageDraw, ImageFont
 from config import START_PHOTO, LOG_CHANNEL, OWNER_ID, START_MESSAGE
-from db import is_user_new, save_user_to_db
+from db import is_user_new, save_user_to_db, db
 from datetime import datetime, timezone, timedelta
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pyrogram.errors import FloodWait, PeerIdInvalid, UserIsBlocked
