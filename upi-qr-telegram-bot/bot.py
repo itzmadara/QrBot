@@ -11,12 +11,14 @@ from PIL import Image, ImageDraw, ImageFont
 from config import START_PHOTO, LOG_CHANNEL, OWNER_ID, START_MESSAGE
 from db import is_user_new, save_user_to_db
 from datetime import datetime, timezone, timedelta
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from pyrogram.errors import FloodWait, PeerIdInvalid, UserIsBlocked
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
 )
-logger = logging.getLogger("upi-qr-bot")
+logger = logging.getLogger("QrBot")
 
 
 API_ID = os.getenv("API_ID")
