@@ -5,7 +5,7 @@ load_dotenv()
 
 API_ID = int(os.environ.get("API_ID", "22829298"))
 API_HASH = os.environ.get("API_HASH", "b3c9a9050e62ac013c1a846dc3bb84cd")
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "8530722799:AAGFJSbAfVIe1Tq4ka3ItXveK6zpwCn6aFs")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "7998934833:AAEPpn3oaDEHH_mUYqWGs7AVM39udG1ltO0")
 LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1003896893576"))
 OWNER_ID = int(os.environ.get("OWNER_ID", "1645068158"))
 START_MESSAGE = os.environ.get("START_MESSAGE", """
