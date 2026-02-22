@@ -10,6 +10,7 @@ from pyrogram.types import Message
 from PIL import Image, ImageDraw, ImageFont
 from config import START_PHOTO, LOG_CHANNEL, OWNER_ID, START_MESSAGE
 from db import is_user_new, save_user_to_db
+from datetime import datetime, timezone, timedelta
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,6 +31,7 @@ if not API_ID or not API_HASH or not BOT_TOKEN:
 
 UPI_ID_REGEX = re.compile(r"^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$")
 AMOUNT_REGEX = re.compile(r"^\d+(\.\d{1,2})?$")
+BOT_START_TIME = datetime.now()
 
 
 def is_valid_upi_id(upi_id: str) -> bool:
@@ -196,6 +198,116 @@ async def qr_handler(_: Client, message: Message) -> None:
 
     await message.reply_photo(photo=image_buffer, caption=caption)
     logger.info("Generated QR for user=%s upi=%s amount=%s", message.from_user.id, upi_id, amount)
+
+
+@app.on_message(filters.command("status"))
+async def bot_status(client, message):
+    # Calculate uptime
+    uptime = str(datetime.now() - BOT_START_TIME).split('.')[0]
+    
+    # Calculate ping
+    start = datetime.now()
+    m = await message.reply_text("Pinging...")
+    end = datetime.now()
+    ping = (end - start).microseconds // 1000
+
+    # Bot version
+    version = "v1.1.2"
+
+    # Send the status
+    await m.edit_text(
+        f"🐱 **Bᴏᴛ Sᴛᴀᴛᴜs:**\n\n"
+        f"➲ **Bᴏᴛ Uᴘᴛɪᴍᴇ:** `{uptime}`\n"
+        f"➲ **Pɪɴɢ:** `{ping}ms`\n"
+        f"➲ **Vᴇʀsɪᴏɴ:** `{version}`"
+    )
+
+@app.on_message(filters.command("users") & filters.user(OWNER_ID))
+async def users(client: Client, message: Message):
+    user_count = await db.users.count_documents({})  # Count all users in the collection
+    await message.reply(f"Total users: {user_count}")
+
+@app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
+async def broadcast(client: Client, message: Message):
+    if not message.reply_to_message:
+        await message.reply("Rᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇꜱꜱᴀɢᴇ ᴏʀ ᴘᴏꜱᴛ ᴛᴏ ʙʀᴏᴀᴅᴄᴀꜱᴛ ɪᴛ.")
+        return
+
+    broadcast_message = message.reply_to_message  # The message to broadcast
+    users = db.users.find()  # Fetch all users from the database
+
+    # Initialize counters
+    total_users = 0
+    successful = 0
+    blocked_users = 0
+    deleted_accounts = 0
+    unsuccessful = 0
+
+    # Send initial broadcast status
+    status_message = await message.reply("**ʙʀᴏᴀᴅᴄᴀꜱᴛ ɪꜱ ɪɴ ᴘʀᴏᴄᴇꜱꜱ...**\n\n"
+                                         "Total Users: 0\n"
+                                         "Successful: 0\n"
+                                         "Blocked Users: 0\n"
+                                         "Deleted Accounts: 0\n"
+                                         "Unsuccessful: 0")
+
+    async for user in users:
+        total_users += 1
+        try:
+            if broadcast_message.text:  # For text messages
+                await client.send_message(user["_id"], broadcast_message.text)
+            elif broadcast_message.photo:  # For photos
+                await client.send_photo(
+                    user["_id"],
+                    broadcast_message.photo.file_id,
+                    caption=broadcast_message.caption or ""
+                )
+            elif broadcast_message.video:  # For videos
+                await client.send_video(
+                    user["_id"],
+                    broadcast_message.video.file_id,
+                    caption=broadcast_message.caption or ""
+                )
+            elif broadcast_message.document:  # For documents
+                await client.send_document(
+                    user["_id"],
+                    broadcast_message.document.file_id,
+                    caption=broadcast_message.caption or ""
+                )
+            successful += 1
+        except FloodWait as e:
+            print(f"FloodWait detected. Sleeping for {e.x} seconds.")
+            await asyncio.sleep(e.x)
+        except UserIsBlocked:
+            blocked_users += 1
+        except PeerIdInvalid:
+            deleted_accounts += 1
+        except Exception as ex:
+            print(f"Failed to send message to {user['_id']}: {ex}")
+            unsuccessful += 1
+
+        # Update the status message
+        try:
+            await status_message.edit_text(
+                f"**ʙʀᴏᴀᴅᴄᴀꜱᴛ ɪꜱ ɪɴ ᴘʀᴏᴄᴇꜱꜱ...**\n\n"
+                f"Tᴏᴛᴀʟ Uꜱᴇʀꜱ: {total_users}\n"
+                f"Sᴜᴄᴄᴇꜱꜱꜰᴜʟ: {successful}\n"
+                f"Bʟᴏᴄᴋᴇᴅ Uꜱᴇʀꜱ: {blocked_users}\n"
+                f"Dᴇʟᴇᴛᴇᴅ Aᴄᴄᴏᴜɴᴛꜱ: {deleted_accounts}\n"
+                f"Uɴꜱᴜᴄᴄᴇꜱꜱꜰᴜʟ: {unsuccessful}"
+            )
+        except Exception:
+            pass  # Avoid breaking the loop due to edit_text errors
+
+    # Final broadcast status
+    await status_message.edit_text(
+        f"**ʙʀᴏᴀᴅᴄᴀꜱᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ...**\n\n"
+        f"Tᴏᴛᴀʟ Uꜱᴇʀꜱ: {total_users}\n"
+        f"Sᴜᴄᴄᴇꜱꜱꜰᴜʟ: {successful}\n"
+        f"Bʟᴏᴄᴋᴇᴅ Uꜱᴇʀꜱ: {blocked_users}\n"
+        f"Dᴇʟᴇᴛᴇᴅ Aᴄᴄᴏᴜɴᴛꜱ: {deleted_accounts}\n"
+        f"Uɴꜱᴜᴄᴄᴇꜱꜱꜰᴜʟ: {unsuccessful}"
+    )
 
 
 if __name__ == "__main__":
