@@ -8,7 +8,7 @@ import qrcode
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from PIL import Image, ImageDraw, ImageFont
-from config import START_PHOTO, LOG_CHANNEL, OWNER_IDS, START_MESSAGE
+from config import START_PHOTO, LOG_CHANNEL, OWNER_ID, START_MESSAGE
 from db import is_user_new, save_user_to_db
 
 logging.basicConfig(
